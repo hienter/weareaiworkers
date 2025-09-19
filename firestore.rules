@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Jobs collection - 모든 사용자가 읽기 가능, 인증된 관리자만 쓰기 가능
+    match /jobs/{jobId} {
+      allow read: if true; // 모든 사용자가 채용공고 조회 가능
+      allow write: if request.auth != null && isAdmin(request.auth.token.email);
+    }
+    
+    // 관리자 이메일 확인 함수
+    function isAdmin(email) {
+      return email in [
+        'sjhk01@gmail.com', // 형의 Gmail 계정
+        'admin@weareaiworkers.com'
+      ];
+    }
+  }
+}
